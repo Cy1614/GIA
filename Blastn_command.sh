@@ -17,4 +17,16 @@ query_l="/home/cy302/Genome_Informatics/Assignment_2/dmel-all-translation-r6.18.
 target="/home/cy302/Genome_Informatics/Assignment_2/dvir-all-chromosome-r1.06.fasta"
 blastn -query $query_c -subject $target -outfmt "6" -out balstn_dvir.txt -evalue 1e-3
 tblastn -query $query_l -subject $target -outfmt "6" -out tbalstn_dvir.txt -evalue 1e-3
-#-----------------------------------------------------------------------------------------------------------------------#
+
+#------------------------------ the following clot is for Yusef (D. grimshawi)---------------------------------------------------------#
+
+query="/mhome/maths/s/ypr20/Genome_informatics_assignment_2/dmel-all-translation-r6.18.fasta"
+target="/mhome/maths/s/ypr20/Genome_informatics_assignment_2/dgri-all-chromosome-r1.05.fasta"
+
+tblastn -query $query -subject $target -outfmt "6" -out /mhome/maths/s/ypr20/Genome_informatics_assignment_2/tblastn_gri.txt -evalue 1e-3 
+
+
+query="/mhome/maths/s/ypr20/Genome_informatics_assignment_2/dmel-all-transcript-r6.18.fasta"
+target="/mhome/maths/s/ypr20/Genome_informatics_assignment_2/dgri-all-chromosome-r1.05.fasta"
+
+blastn -query $query -subject $target -task blastn -outfmt "6" -out /mhome/maths/s/ypr20/Genome_informatics_assignment_2/blastn_gri.txt -evalue 1e-3
