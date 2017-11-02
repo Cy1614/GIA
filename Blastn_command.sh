@@ -1,14 +1,12 @@
 #--------------------------------------------------code for Dicky------------------------------------------------------------
+cd /local/data/public/ctl43/gia2/result
 export PATH="$PATH:/local/data/public/genome_informatics/programs/ncbi-blast-2.5.0+/bin"
-
 target="/local/data/public/ctl43/gia2/db/dmoj-all-chromosome-r1.04.fasta"
-#-------------------------------------------------tblastn D.mel against D.moj---------------------------------------------
-query="/local/data/public/ctl43/gia2/query/dmel-all-translation-r6.18.fasta"
-tblastn -query $query -subject $target -outfmt "6" -out tblastn_moj.txt -evalue 1e-3
 
-#---------------------------------------------------blastn D.mel against D.moj---------------------------------------------
-query="/local/data/public/ctl43/gia2/query/dmel-all-transcript-r6.18.fasta"
-blastn -query $query -subject $target -task blastn -outfmt "6" -out blastn_moj.txt -evalue 1e-3
+query_tblastn="/local/data/public/ctl43/gia2/query/dmel-all-translation-r6.18.fasta"
+query_blastn="/local/data/public/ctl43/gia2/query/dmel-all-transcript-r6.18.fasta"
+tblastn -query $query_blastn -subject $target -outfmt "6" -out tblastn_moj.txt -evalue 1e-3
+blastn -query $query_blastn -subject $target -task blastn -outfmt "6" -out blastn_moj.txt -evalue 1e-3
 
 
 #------------------------------ the following clot is for Albert -------------------------------------------------------#
