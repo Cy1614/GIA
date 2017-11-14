@@ -1,5 +1,5 @@
-setwd('/home/cy302/Genome_Informatics/Assignment_2/')
 library('data.table')
+library("parallel")
 df.dmoj.blastn<-fread('blastn_dmoj.txt')
 df.dmoj.tblastn <- fread('tblastn_dmoj.txt')
 df.dvir.blastn <- fread('blastn_dvir.txt')
@@ -22,32 +22,24 @@ for (i in seq.int(length(df.dmel.transcript))){
     gene.list <- c(gene.list, substr(df.dmel.transcript[i], ind+7, ind+17))
   }
 }
-mat.mrna.gene <- cbind(mrna.list, gene.list)
 
-mrna2gene <- function(l){
-  l.alternative <- rep(0, length(l))
-  for (i in 1:length(unique(l))){
-    s <- which(mrna.list==unique(l)[i])
-    # since the mrna list is unqiue
-    l.alternative[s] <- gene.list[s]
-  }
-  
-  return(l.alternative)
-}
+names(gene.list) <- mrna.list
 
 transfer.bl.gc <- function(df){
-  query <- mrna2gene(df$`Query/Gene_ID`)
+  #df<-df.dmoj.blastn
+  df$Gene<-gene.list[df$`Query/Gene_ID`]
   s <- as.numeric(df$End_Target_pos > df$Start_Target_Pos)
   s[which(s==0)] <- '-'
   s[which(s==1)] <- '+'
-  df.2 <- data.frame(cbind(query, df$Start_Target_Pos, 
-                           df$End_Target_pos, df$Alignment_Length, df$E_val, df$Bit_score, 
-                           df$`Target/Scaffold_ID`))
-  names(df.2) <- c('Gene_ID', 'start', 'end', 'length', 'e-val', 'bit_scr', 'scaffold')
-  write.table(df.2, 'output.txt',col.names=T,row.names=F,quote=F, sep='\t')
-  return(df.2)
+  df$S<-s
+  write.table(df, 'blastn_dmoj_converted.txt',col.names=T,row.names=F,quote=F, sep='\t')
+  nrow(df)
+  return(df)
 }
+#calculate_cutoff(df$E_val)
+#dmoj_blastn_df<-df[df$E_val<2/140000000,]
 
-# i don't actually understand why there are zeros in the output dataframe, i will look into that when i come back tonight, 
-# around 9pm, feel free to delete the rows with 0 as their gene IDs and feed the file to your function, you can remove the
-# write.table() outside the function to change the name of the output file accordingly, Ta
+colnames(df) <- c('unique_ID', 'Scaffold_ID', 'Percent_Identity', 
+                           'Alignment_Length', 'Num_Mismathces', 'Num_Gap', 
+                           'mRNA_Begin', 'mRNA_End', 'Begin', 
+                           'End', 'E_val', 'Bit_score',"Gene_ID","S")
