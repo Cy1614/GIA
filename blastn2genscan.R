@@ -26,10 +26,10 @@ mat.mrna.gene <- cbind(mrna.list, gene.list)
 
 mrna2gene <- function(l){
   l.alternative <- rep(0, length(l))
-  for (i in 1:length(l)){
-    s <- which(mrna.list==l[i])
+  for (i in 1:length(unique(l))){
+    s <- which(mrna.list==unique(l)[i])
     # since the mrna list is unqiue
-    l.alternative[i] <- gene.list[s]
+    l.alternative[s] <- gene.list[s]
   }
   
   return(l.alternative)
