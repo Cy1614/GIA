@@ -44,5 +44,10 @@ transfer.bl.gc <- function(df){
                            df$End_Target_pos, df$Alignment_Length, df$E_val, df$Bit_score, 
                            df$`Target/Scaffold_ID`))
   names(df.2) <- c('Gene_ID', 'start', 'end', 'length', 'e-val', 'bit_scr', 'scaffold')
+  write.table(df.2, 'output.txt',col.names=T,row.names=F,quote=F, sep='\t')
   return(df.2)
 }
+
+# i don't actually understand why there are zeros in the output dataframe, i will look into that when i come back tonight, 
+# around 9pm, feel free to delete the rows with 0 as their gene IDs and feed the file to your function, you can remove the
+# write.table() outside the function to change the name of the output file accordingly, Ta
