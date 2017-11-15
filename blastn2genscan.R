@@ -86,7 +86,7 @@ df.dmel.translation <- readLines('dmel-all-translation-r6.18.fasta')
 mrna.list.translation <- gene.list.translation <- c()
 for (i in seq.int(length(df.dmel.translation))){
   if (substr(df.dmel.translation[i], 1, 1)=='>'){
-    mrna.list <- c(mrna.list.translation, substr(df.dmel.translation[i], 2, 12))
+    mrna.list.translation <- c(mrna.list.translation, substr(df.dmel.translation[i], 2, 12))
     ind <- gregexpr('parent', df.dmel.translation[i])[[1]][1]
     gene.list.translation <- c(gene.list.translation, substr(df.dmel.translation[i], ind+7, ind+17))
   }
