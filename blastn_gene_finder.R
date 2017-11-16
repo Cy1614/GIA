@@ -12,7 +12,12 @@ transfer2gene <- function(df,conversion_list){
   ##write.table(df, 'blastn_dmoj_converted.txt',col.names=T,row.names=F,quote=F, sep='\t')
   return(df)
 }
-
+genscan_gene_region_finder<-function(gene_ex_mat){
+  #gene_ex_mat<-gene_ex_list[[1]]
+  gene_start<-min(gene_ex_mat$Begin)
+  gene_end<-max(gene_ex_mat$End)
+  c(gene_ex_mat$Scaffold_ID[1],gene_ex_mat$S[1],gene_start,gene_end,gene_ex_mat$unique_ID[1])
+}
 blastn_gene_finder<-function(gene_data){
   #gene_data<-blast_gene_ex_list[[2]]
   #gene_data<-blast_gene_ex_list[["FBgn0003256"]]
@@ -70,8 +75,8 @@ blastn_gene_finder<-function(gene_data){
   output
 }
 integrated_best_gene<-function(blast_data,type){
-  #type="protein"
-  #blast_data <- fread('tblastn_dmoj.txt')
+  #type="mRNA"
+  #blast_data <- fread('blastn_dmoj.txt')
   names(blast_data) <- c('Query/Gene_ID', 'Scaffold_ID', 'Percent_Identity', 
                          'Alignment_Length', 'Num_Mismathces', 'Num_Gap', 
                          'Start_Query_Pos', 'End_Query_Pos', 'Begin', 
@@ -143,15 +148,16 @@ names(protein.list)<-protein_gene_converted[,1]
 gtf_file<-import("/Users/LawCheukTing/Desktop/gia2_result/dmoj-all-r1.04.gtf")
 gene_gtf_file<-gtf_file[gtf_file@elementMetadata[,"type"]=="gene"]
 exon_gtf_file<-gtf_file[gtf_file@elementMetadata[,"type"]=="exon"]
-blast_data <- fread('blastn_dvir.txt')
-head(blast_data[-duplicated(blast_data$V9),][order(blast_data[-duplicated(blast_data$V9),"V11"])],100)
+blast_data <- fread('tblastn_dmoj.txt')
+#head(blast_data[-duplicated(blast_data$V9),][order(blast_data[-duplicated(blast_data$V9),"V11"])],100)
 
-best_genes_data<-integrated_best_gene(blast_data,"mRNA")
+best_genes_data<-integrated_best_gene(blast_data,"protein")
 blast_best_gene_ex_list <- split(best_genes_data, best_genes_data$Gene_ID)
 blast_gene_region_data<-mclapply(blast_best_gene_ex_list,mc.cores = getOption("mc.cores", 6L),function(x)genscan_gene_region_finder(x))
 blast_gene_region_data<-do.call(rbind,blast_gene_region_data)
 blast_gene_region_df<-as.data.frame(blast_gene_region_data)
 colnames(blast_gene_region_df)<-c("Scaffold_ID", "S","Begin","End","unique_ID")
+
 #-------------------------gene overlap------------------
 blast_gene_gr<-GRanges(blast_gene_region_df$Scaffold_ID,strand=blast_gene_region_df$S,IRanges(as.numeric(as.character(blast_gene_region_df$Begin)),as.numeric(as.character(blast_gene_region_df$End))),rownames(blast_gene_region_df))
 blast_overlap<-findOverlaps(blast_gene_gr,gene_gtf_file)
@@ -183,4 +189,4 @@ blast_exon_plot_data<-cbind(log10(as.data.frame(blast_exon_gr[blast_exon_overlap
 plot_col_scatter(blast_exon_plot_data)
 
 
-
+write.table(blast_data[order(blast_data$Scaffold_ID)],"scaffold_ordered_blastn_moj.txt",sep="\t",quote=F,col.names=T, row.names=F)
